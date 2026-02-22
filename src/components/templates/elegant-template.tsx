@@ -43,7 +43,7 @@ export function ElegantTemplate({ data }: Props) {
   };
 
   return (
-    <div className="min-h-[297mm] text-[11px] leading-relaxed bg-[#f0ece4]">
+    <div className="min-h-[297mm] text-[11px] leading-relaxed bg-white">
       {/* ── Header ── */}
       <div
         className="flex items-center gap-5 px-7 py-5"
