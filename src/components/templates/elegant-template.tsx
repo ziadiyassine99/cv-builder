@@ -13,31 +13,12 @@ function descriptionLines(text: string): string[] {
     .filter(Boolean);
 }
 
-const LANG_BAR_COLORS = [
-  "#1B2A4A",
-  "#E8763A",
-  "#0e7490",
-  "#7c3aed",
-  "#059669",
-];
-
-const INTEREST_COLORS = [
-  "#1B2A4A",
-  "#E8763A",
-  "#0e7490",
-  "#7c3aed",
-  "#059669",
-  "#dc2626",
-  "#be185d",
-  "#2563eb",
-];
-
 function langBarWidth(level: string): string {
   const map: Record<string, string> = {
     "Langue maternelle": "100%",
     Native: "100%",
-    Courant: "80%",
-    Fluent: "80%",
+    Courant: "85%",
+    Fluent: "85%",
     Avancé: "65%",
     Advanced: "65%",
     Intermédiaire: "50%",
@@ -62,119 +43,83 @@ export function ElegantTemplate({ data }: Props) {
   };
 
   return (
-    <div className="min-h-[297mm] text-[11px] leading-relaxed bg-[#f5f0eb]">
+    <div className="min-h-[297mm] text-[11px] leading-relaxed bg-[#f0ece4]">
       {/* ── Header ── */}
       <div
-        className="flex items-center gap-6 px-8 py-6"
+        className="flex items-center gap-5 px-7 py-5"
         style={{ backgroundColor: color }}
       >
         {pi.photo ? (
           <div
-            className="w-[90px] h-[100px] rounded-md overflow-hidden shrink-0"
-            style={{ border: "3px solid #E8763A" }}
+            className="w-[105px] h-[125px] rounded-lg overflow-hidden shrink-0"
+            style={{ border: `3px solid ${color}`, boxShadow: "0 0 0 3px rgba(255,255,255,0.3)" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={pi.photo}
-              alt=""
-              className="w-full h-full object-cover"
-            />
+            <img src={pi.photo} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
           <div
-            className="w-[90px] h-[100px] rounded-md shrink-0 bg-white/10"
-            style={{ border: "3px solid #E8763A" }}
+            className="w-[105px] h-[125px] rounded-lg shrink-0 bg-white/10"
+            style={{ border: "3px solid rgba(255,255,255,0.25)" }}
           />
         )}
 
         <div className="flex-1 min-w-0">
-          <h1 className="text-[22px] font-bold text-white tracking-wide">
+          <h1 className="text-[24px] font-bold text-white tracking-wide leading-tight">
             {pi.firstName} {pi.lastName}
           </h1>
           {pi.jobTitle && (
-            <p className="text-[12px] text-white/80 mt-0.5 tracking-wide">
+            <p className="text-[12px] text-white/75 mt-0.5 tracking-wide">
               {pi.jobTitle}
             </p>
           )}
 
-          <div className="flex items-center gap-5 mt-3 flex-wrap">
+          {/* Row 1: email + phone */}
+          <div className="flex items-center gap-5 mt-3">
             {pi.email && (
               <span className="text-white/90 text-[9px] flex items-center gap-1.5">
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 {pi.email}
               </span>
             )}
             {pi.phone && (
               <span className="text-white/90 text-[9px] flex items-center gap-1.5">
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 {pi.phone}
               </span>
             )}
-            {(pi.address || pi.city) && (
-              <span className="text-white/90 text-[9px] flex items-center gap-1.5">
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                {[pi.address, pi.postalCode, pi.city]
-                  .filter(Boolean)
-                  .join(", ")}
-              </span>
-            )}
           </div>
+
+          {/* Row 2: address */}
+          {(pi.address || pi.city) && (
+            <div className="mt-1">
+              <span className="text-white/90 text-[9px] flex items-center gap-1.5">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {[pi.address, pi.postalCode, pi.city].filter(Boolean).join(", ")}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Body ── */}
-      <div className="flex gap-0">
+      {/* ── Body: two columns ── */}
+      <div className="flex">
         {/* Left column */}
-        <div className="w-[58%] px-8 py-6">
-          {/* About me / Profile */}
+        <div className="w-[56%] px-7 py-5">
+          {/* Profile / About me */}
           {content.hasProfile && (
             <div className="mb-5">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.profile}
               </h2>
-              <p className="text-[10px] text-gray-700 leading-relaxed italic">
+              <p className="text-[10px] text-gray-600 leading-relaxed italic">
                 {data.profile}
               </p>
             </div>
@@ -183,7 +128,7 @@ export function ElegantTemplate({ data }: Props) {
           {/* Education */}
           {content.hasEducation && (
             <div className="mb-5">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.education}
               </h2>
               <div className="space-y-3">
@@ -194,23 +139,18 @@ export function ElegantTemplate({ data }: Props) {
                         {edu.degree}
                       </h3>
                       {(edu.startDate || edu.endDate) && (
-                        <span className="text-[9px] text-gray-500 shrink-0">
-                          {formatDateRange(
-                            edu.startDate,
-                            edu.endDate,
-                            edu.current,
-                            dateOpts
-                          )}
+                        <span className="text-[9px] text-gray-500 shrink-0 whitespace-nowrap">
+                          {formatDateRange(edu.startDate, edu.endDate, edu.current, dateOpts)}
                         </span>
                       )}
                     </div>
                     {edu.school && (
-                      <p className="text-[10px] text-gray-600 italic">
+                      <p className="text-[10px] text-gray-500 italic">
                         {[edu.school, edu.city].filter(Boolean).join(", ")}
                       </p>
                     )}
                     {edu.description && (
-                      <p className="text-[10px] text-gray-600 italic mt-0.5">
+                      <p className="text-[10px] text-gray-500 italic mt-0.5">
                         {edu.description}
                       </p>
                     )}
@@ -223,7 +163,7 @@ export function ElegantTemplate({ data }: Props) {
           {/* Experience */}
           {content.hasExperience && (
             <div className="mb-5">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.experience}
               </h2>
               <div className="space-y-3.5">
@@ -234,13 +174,8 @@ export function ElegantTemplate({ data }: Props) {
                         {exp.position}
                       </h3>
                       {(exp.startDate || exp.endDate) && (
-                        <span className="text-[9px] text-gray-500 shrink-0">
-                          {formatDateRange(
-                            exp.startDate,
-                            exp.endDate,
-                            exp.current,
-                            dateOpts
-                          )}
+                        <span className="text-[9px] text-gray-500 shrink-0 whitespace-nowrap">
+                          {formatDateRange(exp.startDate, exp.endDate, exp.current, dateOpts)}
                         </span>
                       )}
                     </div>
@@ -252,10 +187,7 @@ export function ElegantTemplate({ data }: Props) {
                     {exp.description && (
                       <ul className="mt-1 space-y-0.5">
                         {descriptionLines(exp.description).map((line, i) => (
-                          <li
-                            key={i}
-                            className="flex gap-2 text-[10px] text-gray-700"
-                          >
+                          <li key={i} className="flex gap-1.5 text-[10px] text-gray-600">
                             <span className="shrink-0 mt-[3px]">•</span>
                             <span>{line}</span>
                           </li>
@@ -271,7 +203,7 @@ export function ElegantTemplate({ data }: Props) {
           {/* Custom Sections */}
           {data.customSections.map((section) => (
             <div key={section.id} className="mb-5">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {section.title}
               </h2>
               <div className="space-y-3">
@@ -283,24 +215,15 @@ export function ElegantTemplate({ data }: Props) {
                       </h3>
                       {(item.startDate || item.endDate) && (
                         <span className="text-[9px] text-gray-500 shrink-0">
-                          {formatDateRange(
-                            item.startDate,
-                            item.endDate,
-                            false,
-                            dateOpts
-                          )}
+                          {formatDateRange(item.startDate, item.endDate, false, dateOpts)}
                         </span>
                       )}
                     </div>
                     {item.subtitle && (
-                      <p className="text-[10px] text-gray-600 italic">
-                        {item.subtitle}
-                      </p>
+                      <p className="text-[10px] text-gray-500 italic">{item.subtitle}</p>
                     )}
                     {item.description && (
-                      <p className="text-[10px] text-gray-600 mt-0.5 whitespace-pre-line">
-                        {item.description}
-                      </p>
+                      <p className="text-[10px] text-gray-500 mt-0.5 whitespace-pre-line">{item.description}</p>
                     )}
                   </div>
                 ))}
@@ -310,20 +233,16 @@ export function ElegantTemplate({ data }: Props) {
         </div>
 
         {/* Right column */}
-        <div className="w-[42%] px-6 py-6">
+        <div className="w-[44%] px-6 py-5">
           {/* Skills */}
           {content.hasSkills && (
-            <div className="mb-6">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+            <div className="mb-5">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.skills}
               </h2>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 mt-1">
                 {data.skills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="text-[11px]"
-                    style={{ color }}
-                  >
+                  <div key={skill.id} className="text-[11px]" style={{ color }}>
                     {skill.name}
                   </div>
                 ))}
@@ -333,23 +252,20 @@ export function ElegantTemplate({ data }: Props) {
 
           {/* Languages */}
           {content.hasLanguages && (
-            <div className="mb-6">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+            <div className="mb-5">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.languages}
               </h2>
               <div className="space-y-2.5 mt-2">
-                {data.languages.map((lang, i) => (
+                {data.languages.map((lang) => (
                   <div key={lang.id}>
-                    <span className="text-[10px] text-gray-700 font-medium">
-                      {lang.name}
-                    </span>
+                    <span className="text-[10px] text-gray-700">{lang.name}</span>
                     <div className="w-full h-[5px] bg-gray-200 rounded-full mt-1">
                       <div
                         className="h-full rounded-full"
                         style={{
                           width: langBarWidth(lang.level),
-                          backgroundColor:
-                            LANG_BAR_COLORS[i % LANG_BAR_COLORS.length],
+                          backgroundColor: color,
                         }}
                       />
                     </div>
@@ -361,22 +277,19 @@ export function ElegantTemplate({ data }: Props) {
 
           {/* Interests */}
           {content.hasInterests && (
-            <div className="mb-6">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+            <div className="mb-5">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.interests}
               </h2>
               <div className="space-y-1.5 mt-2">
-                {data.interests.map((interest, i) => (
+                {data.interests.map((interest) => (
                   <div
                     key={interest.id}
                     className="flex items-center gap-2 text-[11px] text-gray-700"
                   >
                     <span
                       className="w-[8px] h-[8px] shrink-0"
-                      style={{
-                        backgroundColor:
-                          INTEREST_COLORS[i % INTEREST_COLORS.length],
-                      }}
+                      style={{ backgroundColor: color }}
                     />
                     {interest.name}
                   </div>
@@ -387,23 +300,19 @@ export function ElegantTemplate({ data }: Props) {
 
           {/* Additional info */}
           {(pi.nationality || pi.drivingLicense) && (
-            <div className="mb-6">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-400">
+            <div className="mb-5">
+              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.info}
               </h2>
-              <div className="space-y-1 text-[10px] text-gray-700">
+              <div className="space-y-1 text-[10px] text-gray-700 mt-1">
                 {pi.nationality && (
                   <div>
-                    <span className="font-medium">
-                      {t.templates.nationality}
-                    </span>{" "}
-                    {pi.nationality}
+                    <span className="font-medium">{t.templates.nationality}</span> {pi.nationality}
                   </div>
                 )}
                 {pi.drivingLicense && (
                   <div>
-                    <span className="font-medium">{t.templates.license}</span>{" "}
-                    {pi.drivingLicense}
+                    <span className="font-medium">{t.templates.license}</span> {pi.drivingLicense}
                   </div>
                 )}
               </div>
