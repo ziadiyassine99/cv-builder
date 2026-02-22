@@ -12,11 +12,13 @@ import {
 import { User, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { PhotoUpload } from "./photo-upload";
+import { useI18n } from "@/lib/i18n";
 
 const TEMPLATES_WITH_PHOTO = ["professional", "vertical"];
 
 export function PersonalInfoForm() {
   const { resume, updatePersonalInfo } = useResumeStore();
+  const { t } = useI18n();
   const info = resume.personalInfo;
   const [showMore, setShowMore] = useState(false);
   const showPhoto = TEMPLATES_WITH_PHOTO.includes(resume.templateId);
@@ -26,7 +28,7 @@ export function PersonalInfoForm() {
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <User className="w-5 h-5 text-primary" />
-          Informations personnelles
+          {t.forms.personalInfo}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -35,7 +37,7 @@ export function PersonalInfoForm() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="firstName" className="text-xs">
-              Prénom
+              {t.forms.firstName}
             </Label>
             <Input
               id="firstName"
@@ -46,7 +48,7 @@ export function PersonalInfoForm() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="lastName" className="text-xs">
-              Nom de famille
+              {t.forms.lastName}
             </Label>
             <Input
               id="lastName"
@@ -59,20 +61,20 @@ export function PersonalInfoForm() {
 
         <div className="space-y-1.5">
           <Label htmlFor="jobTitle" className="text-xs">
-            Emploi recherché
+            {t.forms.jobTitle}
           </Label>
           <Input
             id="jobTitle"
             value={info.jobTitle}
             onChange={(e) => updatePersonalInfo({ jobTitle: e.target.value })}
-            placeholder="Développeur Full Stack"
+            placeholder={t.forms.jobTitlePlaceholder}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-xs">
-              Adresse e-mail
+              {t.forms.email}
             </Label>
             <Input
               id="email"
@@ -84,7 +86,7 @@ export function PersonalInfoForm() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="phone" className="text-xs">
-              Téléphone
+              {t.forms.phone}
             </Label>
             <Input
               id="phone"
@@ -97,7 +99,7 @@ export function PersonalInfoForm() {
 
         <div className="space-y-1.5">
           <Label htmlFor="address" className="text-xs">
-            Adresse
+            {t.forms.address}
           </Label>
           <Input
             id="address"
@@ -110,7 +112,7 @@ export function PersonalInfoForm() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="postalCode" className="text-xs">
-              Code postal
+              {t.forms.postalCode}
             </Label>
             <Input
               id="postalCode"
@@ -123,7 +125,7 @@ export function PersonalInfoForm() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="city" className="text-xs">
-              Ville
+              {t.forms.city}
             </Label>
             <Input
               id="city"
@@ -141,11 +143,11 @@ export function PersonalInfoForm() {
         >
           {showMore ? (
             <>
-              <ChevronUp className="w-4 h-4" /> Moins d&apos;options
+              <ChevronUp className="w-4 h-4" /> {t.forms.lessOptions}
             </>
           ) : (
             <>
-              <ChevronDown className="w-4 h-4" /> Plus d&apos;options
+              <ChevronDown className="w-4 h-4" /> {t.forms.moreOptions}
             </>
           )}
         </button>
@@ -155,7 +157,7 @@ export function PersonalInfoForm() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="dateOfBirth" className="text-xs">
-                  Date de naissance
+                  {t.forms.birthDate}
                 </Label>
                 <Input
                   id="dateOfBirth"
@@ -168,7 +170,7 @@ export function PersonalInfoForm() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="nationality" className="text-xs">
-                  Nationalité
+                  {t.forms.nationality}
                 </Label>
                 <Input
                   id="nationality"
@@ -176,14 +178,14 @@ export function PersonalInfoForm() {
                   onChange={(e) =>
                     updatePersonalInfo({ nationality: e.target.value })
                   }
-                  placeholder="Française"
+                  placeholder={t.forms.nationalityPlaceholder}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="drivingLicense" className="text-xs">
-                  Permis de conduire
+                  {t.forms.drivingLicense}
                 </Label>
                 <Input
                   id="drivingLicense"
@@ -196,7 +198,7 @@ export function PersonalInfoForm() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="maritalStatus" className="text-xs">
-                  État civil
+                  {t.forms.maritalStatus}
                 </Label>
                 <Input
                   id="maritalStatus"
@@ -204,14 +206,14 @@ export function PersonalInfoForm() {
                   onChange={(e) =>
                     updatePersonalInfo({ maritalStatus: e.target.value })
                   }
-                  placeholder="Célibataire"
+                  placeholder={t.forms.maritalStatusPlaceholder}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="website" className="text-xs">
-                  Site internet
+                  {t.forms.website}
                 </Label>
                 <Input
                   id="website"
@@ -224,7 +226,7 @@ export function PersonalInfoForm() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="linkedin" className="text-xs">
-                  LinkedIn
+                  {t.forms.linkedin}
                 </Label>
                 <Input
                   id="linkedin"

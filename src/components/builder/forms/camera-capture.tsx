@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
+import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Camera, X, RotateCcw, ArrowRight, Check } from "lucide-react";
 
@@ -9,20 +10,22 @@ interface CameraCaptureProps {
   onCancel: () => void;
 }
 
-const STEPS = [
-  {
-    label: "De face",
-    instruction: "Regardez la camera bien de face",
-    guide: "Centrez votre visage dans le cercle",
-  },
-  {
-    label: "De cote",
-    instruction: "Tournez legerement la tete vers la droite",
-    guide: "Un leger profil, pas completement de cote",
-  },
-];
-
 export function CameraCapture({ onComplete, onCancel }: CameraCaptureProps) {
+  const { t } = useI18n();
+
+  const STEPS = [
+    {
+      label: t.camera.front,
+      instruction: t.camera.frontHint,
+      guide: t.camera.frontDetail,
+    },
+    {
+      label: t.camera.side,
+      instruction: t.camera.sideHint,
+      guide: t.camera.sideDetail,
+    },
+  ];
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -128,8 +131,8 @@ export function CameraCapture({ onComplete, onCancel }: CameraCaptureProps) {
           <X className="w-6 h-6" />
         </button>
         <div className="text-center">
-          <p className="text-white text-sm font-medium">{currentStep?.label || "Termine"}</p>
-          <p className="text-white/50 text-xs">Photo {Math.min(photos.length + 1, STEPS.length)}/{STEPS.length}</p>
+          <p className="text-white text-sm font-medium">{currentStep?.label || t.camera.done}</p>
+          <p className="text-white/50 text-xs">{t.camera.photoCount} {Math.min(photos.length + 1, STEPS.length)}/{STEPS.length}</p>
         </div>
         <button
           type="button"
@@ -198,7 +201,7 @@ export function CameraCapture({ onComplete, onCancel }: CameraCaptureProps) {
               {photos.length > 0 && (
                 <Button variant="ghost" size="sm" onClick={retakePhoto} className="text-white/60 hover:text-white">
                   <RotateCcw className="w-4 h-4 mr-1.5" />
-                  Reprendre
+                  {t.camera.retake}
                 </Button>
               )}
               <button
@@ -215,11 +218,11 @@ export function CameraCapture({ onComplete, onCancel }: CameraCaptureProps) {
             <>
               <Button variant="ghost" size="sm" onClick={retakePhoto} className="text-white/60 hover:text-white">
                 <RotateCcw className="w-4 h-4 mr-1.5" />
-                Reprendre
+                {t.camera.retake}
               </Button>
               <Button onClick={handleDone} className="bg-green-600 hover:bg-green-700">
                 <Check className="w-4 h-4 mr-1.5" />
-                Utiliser ces photos
+                {t.camera.usePhotos}
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </>

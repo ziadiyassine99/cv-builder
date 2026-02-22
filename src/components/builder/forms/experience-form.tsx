@@ -15,17 +15,19 @@ import {
 import { SortableList } from "@/components/builder/sortable-list";
 import { SortableItem } from "@/components/builder/sortable-item";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function ExperienceForm() {
   const { resume, addExperience, updateExperience, removeExperience, reorderExperience } =
     useResumeStore();
+  const { t } = useI18n();
 
   return (
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Briefcase className="w-5 h-5 text-primary" />
-          Expérience professionnelle
+          {t.forms.experienceTitle}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -35,7 +37,7 @@ export function ExperienceForm() {
               <div className="border rounded-lg p-4 space-y-3 mb-3">
                 <div className="flex items-start justify-between">
                   <h4 className="text-sm font-medium">
-                    {exp.position || "Nouveau poste"}
+                    {exp.position || t.forms.newPosition}
                   </h4>
                   <Button
                     variant="ghost"
@@ -49,7 +51,7 @@ export function ExperienceForm() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Poste</Label>
+                    <Label className="text-xs">{t.forms.position}</Label>
                     <Input
                       value={exp.position}
                       onChange={(e) =>
@@ -59,19 +61,19 @@ export function ExperienceForm() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Entreprise</Label>
+                    <Label className="text-xs">{t.forms.company}</Label>
                     <Input
                       value={exp.company}
                       onChange={(e) =>
                         updateExperience(exp.id, { company: e.target.value })
                       }
-                      placeholder="Nom de l'entreprise"
+                      placeholder={t.forms.companyPlaceholder}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Ville</Label>
+                  <Label className="text-xs">{t.forms.city}</Label>
                   <Input
                     value={exp.city}
                     onChange={(e) =>
@@ -83,7 +85,7 @@ export function ExperienceForm() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Date de début</Label>
+                    <Label className="text-xs">{t.forms.startDate}</Label>
                     <Input
                       type="month"
                       value={exp.startDate}
@@ -93,7 +95,7 @@ export function ExperienceForm() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Date de fin</Label>
+                    <Label className="text-xs">{t.forms.endDate}</Label>
                     <Input
                       type="month"
                       value={exp.endDate}
@@ -115,17 +117,17 @@ export function ExperienceForm() {
                       })
                     }
                   />
-                  <Label className="text-xs">Poste actuel</Label>
+                  <Label className="text-xs">{t.forms.currentPosition}</Label>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Description</Label>
+                  <Label className="text-xs">{t.forms.description}</Label>
                   <Textarea
                     value={exp.description}
                     onChange={(e) =>
                       updateExperience(exp.id, { description: e.target.value })
                     }
-                    placeholder="Décrivez vos responsabilités et réalisations..."
+                    placeholder={t.forms.experienceDescPlaceholder}
                     rows={3}
                     className="resize-none"
                   />
@@ -141,7 +143,7 @@ export function ExperienceForm() {
           onClick={addExperience}
         >
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter une expérience
+          {t.forms.addExperience}
         </Button>
       </CardContent>
     </Card>

@@ -13,10 +13,12 @@ import {
 } from "@/lib/sample-data";
 import { Button } from "@/components/ui/button";
 import { Lightbulb, X } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function PrefillBanner() {
   const [dismissed, setDismissed] = useState(false);
   const { resume, setResume } = useResumeStore();
+  const { t } = useI18n();
 
   const isEmpty =
     !resume.personalInfo.firstName &&
@@ -44,10 +46,10 @@ export function PrefillBanner() {
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3">
       <Lightbulb className="w-5 h-5 text-blue-600 shrink-0" />
       <p className="text-sm text-blue-800 flex-1">
-        CV vide ? Remplissez-le avec un exemple pour voir le rendu.
+        {t.editor.prefillBanner}
       </p>
       <Button size="sm" variant="outline" onClick={handlePrefill} className="shrink-0 text-blue-700 border-blue-300 hover:bg-blue-100">
-        Remplir
+        {t.editor.prefillAction}
       </Button>
       <button onClick={() => setDismissed(true)} className="text-blue-400 hover:text-blue-600">
         <X className="w-4 h-4" />

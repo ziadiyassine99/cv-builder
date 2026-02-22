@@ -10,18 +10,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Wrench, Plus, Trash2 } from "lucide-react";
-
-const levelLabels = ["", "Débutant", "Bon", "Très bon", "Excellent", "Expert"];
+import { useI18n } from "@/lib/i18n";
 
 export function SkillsForm() {
   const { resume, addSkill, updateSkill, removeSkill } = useResumeStore();
+  const { t } = useI18n();
+  const levelLabels = ["", ...t.forms.skillLevels];
 
   return (
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Wrench className="w-5 h-5 text-primary" />
-          Compétences
+          {t.forms.skillsTitle}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -61,7 +62,7 @@ export function SkillsForm() {
 
         <Button variant="outline" className="w-full" onClick={addSkill}>
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter une compétence
+          {t.forms.addSkill}
         </Button>
       </CardContent>
     </Card>

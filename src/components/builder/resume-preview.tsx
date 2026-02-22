@@ -4,6 +4,7 @@ import { useResumeStore } from "@/store/resume-store";
 import { ClassicTemplate } from "@/components/templates/classic-template";
 import { ProfessionalTemplate } from "@/components/templates/professional-template";
 import { VerticalTemplate } from "@/components/templates/vertical-template";
+import { ElegantTemplate } from "@/components/templates/elegant-template";
 
 export function ResumePreview() {
   const { resume } = useResumeStore();
@@ -12,6 +13,7 @@ export function ResumePreview() {
     classic: ClassicTemplate,
     professional: ProfessionalTemplate,
     vertical: VerticalTemplate,
+    elegant: ElegantTemplate,
   };
 
   const Template = templateMap[resume.templateId] || ClassicTemplate;

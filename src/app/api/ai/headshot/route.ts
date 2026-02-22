@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import { requireAuth } from "@/lib/api-auth";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export const maxDuration = 120;
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+function getAI() {
+  return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+}
+
+const MAX_IMAGES = 5;
+const MAX_BASE64_LENGTH = 5 * 1024 * 1024; // ~3.75MB decoded (base64 is ~33% larger)
+const ALLOWED_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
 
 const variants = [
   "Using ALL the reference photos provided of this person, generate a professional corporate headshot. The face, features, and identity must be EXACTLY preserved — use the multiple angles to capture the real likeness. Apply: clean solid light gray background, soft professional studio lighting, classic dark navy business suit with white dress shirt and dark tie. Shoulders up, portrait framing.",
@@ -18,10 +31,32 @@ interface SourceImage {
 
 function extractBase64(data: unknown): string {
   if (typeof data === "string") return data;
-  if (data instanceof Uint8Array || data instanceof ArrayBuffer) {
+  if (data instanceof Uint8Array) {
     return Buffer.from(data).toString("base64");
   }
-  return Buffer.from(data as ArrayBuffer).toString("base64");
+  if (data instanceof ArrayBuffer) {
+    return Buffer.from(new Uint8Array(data)).toString("base64");
+  }
+  return Buffer.from(new Uint8Array(data as ArrayBuffer)).toString("base64");
+}
+
+function validateImages(sources: SourceImage[]): string | null {
+  if (sources.length === 0) return "No images provided";
+  if (sources.length > MAX_IMAGES) return `Maximum ${MAX_IMAGES} images allowed`;
+
+  for (const src of sources) {
+    if (!ALLOWED_MIME_TYPES.has(src.mimeType)) {
+      return `Invalid image type: ${src.mimeType}`;
+    }
+    if (typeof src.base64 !== "string" || src.base64.length > MAX_BASE64_LENGTH) {
+      return "Image too large (max 5MB)";
+    }
+    if (src.base64.length === 0) {
+      return "Empty image data";
+    }
+  }
+
+  return null;
 }
 
 async function generateOne(sources: SourceImage[], prompt: string) {
@@ -29,7 +64,7 @@ async function generateOne(sources: SourceImage[], prompt: string) {
     inlineData: { mimeType: src.mimeType, data: src.base64 },
   }));
 
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: "gemini-3-pro-image-preview",
     contents: [
       {
@@ -61,9 +96,14 @@ async function generateOne(sources: SourceImage[], prompt: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+
+    const rateLimitError = rateLimit(auth.user.id, "headshot", RATE_LIMITS.headshot);
+    if (rateLimitError) return rateLimitError;
+
     const body = await req.json();
 
-    // Support both single image (legacy) and multiple images
     let sources: SourceImage[];
     if (body.images && Array.isArray(body.images)) {
       sources = body.images;
@@ -73,8 +113,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No images provided" }, { status: 400 });
     }
 
-    if (sources.length === 0) {
-      return NextResponse.json({ error: "No images provided" }, { status: 400 });
+    const validationError = validateImages(sources);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     const results = await Promise.allSettled(
@@ -89,17 +130,17 @@ export async function POST(req: NextRequest) {
       .map((r) => r.value);
 
     if (images.length === 0) {
-      const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
       return NextResponse.json(
-        { error: firstError?.reason?.message || "Failed to generate any headshot" },
+        { error: "Failed to generate headshots. Please try again." },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ images });
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("Headshot generation error:", errMsg);
-    return NextResponse.json({ error: errMsg }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "An unexpected error occurred. Please try again." },
+      { status: 500 }
+    );
   }
 }

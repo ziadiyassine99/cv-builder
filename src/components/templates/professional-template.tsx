@@ -1,4 +1,5 @@
 import type { ResumeData } from "@/types/resume";
+import { useI18n } from "@/lib/i18n";
 import { formatDateRange, hasContent } from "./template-utils";
 
 interface Props {
@@ -13,9 +14,17 @@ function descriptionLines(text: string): string[] {
 }
 
 export function ProfessionalTemplate({ data }: Props) {
+  const { t } = useI18n();
   const pi = data.personalInfo;
   const color = data.colorPrimary;
   const content = hasContent(data);
+
+  const dateOpts = {
+    months: t.templates.months,
+    present: t.templates.present,
+    from: t.templates.from,
+    to: t.templates.to,
+  };
 
   return (
     <div className="min-h-[297mm] text-[11px] leading-relaxed bg-white">
@@ -86,7 +95,7 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Langues
+                {t.templates.languages}
               </h2>
               <div className="space-y-1 text-[10px]">
                 {data.languages.map((lang) => (
@@ -106,7 +115,7 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Compétences
+                {t.templates.skills}
               </h2>
               <div className="space-y-0.5 text-[10px] text-gray-700">
                 {data.skills.map((skill) => (
@@ -123,7 +132,7 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Centres d&apos;intérêt
+                {t.templates.interests}
               </h2>
               <div className="space-y-0.5 text-[10px] text-gray-700">
                 {data.interests.map((interest) => (
@@ -140,22 +149,22 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Informations
+                {t.templates.info}
               </h2>
               <div className="space-y-1 text-[10px] text-gray-700">
                 {pi.nationality && (
                   <div>
-                    <span className="font-medium">Nationalité :</span> {pi.nationality}
+                    <span className="font-medium">{t.templates.nationality}</span> {pi.nationality}
                   </div>
                 )}
                 {pi.drivingLicense && (
                   <div>
-                    <span className="font-medium">Permis :</span> {pi.drivingLicense}
+                    <span className="font-medium">{t.templates.license}</span> {pi.drivingLicense}
                   </div>
                 )}
                 {(pi.address || pi.city) && (
                   <div>
-                    <span className="font-medium">Adresse :</span>{" "}
+                    <span className="font-medium">{t.templates.address}</span>{" "}
                     {[pi.address, pi.postalCode, pi.city].filter(Boolean).join(", ")}
                   </div>
                 )}
@@ -173,7 +182,7 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Formation
+                {t.templates.education}
               </h2>
               <div className="space-y-3">
                 {data.education.map((edu) => (
@@ -184,7 +193,7 @@ export function ProfessionalTemplate({ data }: Props) {
                     <p className="text-[10px] text-gray-600">
                       {[edu.school, edu.city].filter(Boolean).join(", ")}
                       {(edu.startDate || edu.endDate) && (
-                        <> | {formatDateRange(edu.startDate, edu.endDate, edu.current)}</>
+                        <> | {formatDateRange(edu.startDate, edu.endDate, edu.current, dateOpts)}</>
                       )}
                     </p>
                     {edu.description && (
@@ -205,7 +214,7 @@ export function ProfessionalTemplate({ data }: Props) {
                 className="text-[12px] font-bold uppercase tracking-wider pb-1 mb-2"
                 style={{ color, borderBottom: `2px solid ${color}` }}
               >
-                Expérience
+                {t.templates.experience}
               </h2>
               <div className="space-y-3.5">
                 {data.experience.map((exp) => (
@@ -219,7 +228,7 @@ export function ProfessionalTemplate({ data }: Props) {
                     <p className="text-[10px] text-gray-500">
                       {[exp.city].filter(Boolean).join(", ")}
                       {(exp.startDate || exp.endDate) && (
-                        <>{exp.city ? " | " : ""}{formatDateRange(exp.startDate, exp.endDate, exp.current)}</>
+                        <>{exp.city ? " | " : ""}{formatDateRange(exp.startDate, exp.endDate, exp.current, dateOpts)}</>
                       )}
                     </p>
                     {exp.description && (

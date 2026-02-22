@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function LogoutButton() {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -18,7 +20,7 @@ export function LogoutButton() {
   return (
     <Button variant="ghost" size="sm" onClick={handleLogout}>
       <LogOut className="w-4 h-4 mr-2" />
-      Déconnexion
+      {t.common.logout}
     </Button>
   );
 }

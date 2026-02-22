@@ -17,25 +17,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Globe, Plus, Trash2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 const levels = [
-  "Langue maternelle",
-  "Courant",
-  "Avancé",
-  "Intermédiaire",
-  "Débutant",
+  "Native",
+  "C2",
+  "C1",
+  "B2",
+  "B1",
+  "A2",
+  "A1",
 ];
 
 export function LanguagesForm() {
   const { resume, addLanguage, updateLanguage, removeLanguage } =
     useResumeStore();
+  const { t } = useI18n();
 
   return (
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Globe className="w-5 h-5 text-primary" />
-          Langues
+          {t.forms.languagesTitle}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -46,7 +50,7 @@ export function LanguagesForm() {
               onChange={(e) =>
                 updateLanguage(lang.id, { name: e.target.value })
               }
-              placeholder="Français, Anglais..."
+              placeholder={t.forms.languagePlaceholder}
               className="flex-1"
             />
             <Select
@@ -79,7 +83,7 @@ export function LanguagesForm() {
 
         <Button variant="outline" className="w-full" onClick={addLanguage}>
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter une langue
+          {t.forms.addLanguage}
         </Button>
       </CardContent>
     </Card>

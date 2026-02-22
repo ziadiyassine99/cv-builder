@@ -45,3 +45,5 @@ src/generated/
 
 # template PDFs (large binary files)
 /templatesd/
+
+.vercel

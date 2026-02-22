@@ -8,27 +8,15 @@ import { Palette } from "lucide-react";
 import { ClassicTemplate } from "@/components/templates/classic-template";
 import { ProfessionalTemplate } from "@/components/templates/professional-template";
 import { VerticalTemplate } from "@/components/templates/vertical-template";
+import { ElegantTemplate } from "@/components/templates/elegant-template";
 import type { ResumeData } from "@/types/resume";
+import { useI18n } from "@/lib/i18n";
 
 const templates = [
-  {
-    id: "classic",
-    name: "Classique",
-    description: "Traditionnel, sans photo",
-    Component: ClassicTemplate,
-  },
-  {
-    id: "professional",
-    name: "Étudiant",
-    description: "Photo, 2 colonnes",
-    Component: ProfessionalTemplate,
-  },
-  {
-    id: "vertical",
-    name: "Ingénieur",
-    description: "Photo, timeline",
-    Component: VerticalTemplate,
-  },
+  { id: "classic", Component: ClassicTemplate },
+  { id: "professional", Component: ProfessionalTemplate },
+  { id: "vertical", Component: VerticalTemplate },
+  { id: "elegant", Component: ElegantTemplate },
 ];
 
 const presetColors = [
@@ -177,34 +165,42 @@ function ScaledTemplatePreview({
 
 export function TemplateSelector() {
   const { resume, setTemplateId, setColorPrimary } = useResumeStore();
+  const { t } = useI18n();
   const hideColorPicker = resume.templateId === "classic";
+
+  const templateLabels: Record<string, { name: string; description: string }> = {
+    classic: { name: t.templates.classic, description: t.templates.classicDesc },
+    professional: { name: t.templates.student, description: t.templates.studentDesc },
+    vertical: { name: t.templates.engineer, description: t.templates.engineerDesc },
+    elegant: { name: t.templates.elegant, description: t.templates.elegantDesc },
+  };
 
   return (
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Palette className="w-5 h-5 text-primary" />
-          Modèle et couleur
+          {t.editor.templateAndColor}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-3 gap-3">
-          {templates.map((t) => (
+        <div className="grid grid-cols-4 gap-3">
+          {templates.map((tmpl) => (
             <button
-              key={t.id}
+              key={tmpl.id}
               type="button"
-              onClick={() => setTemplateId(t.id)}
+              onClick={() => setTemplateId(tmpl.id)}
               className="text-center space-y-2"
             >
               <ScaledTemplatePreview
-                templateId={t.id}
+                templateId={tmpl.id}
                 color={resume.colorPrimary}
-                active={resume.templateId === t.id}
+                active={resume.templateId === tmpl.id}
               />
               <div>
-                <div className="text-xs font-medium">{t.name}</div>
+                <div className="text-xs font-medium">{templateLabels[tmpl.id]?.name}</div>
                 <div className="text-[10px] text-muted-foreground">
-                  {t.description}
+                  {templateLabels[tmpl.id]?.description}
                 </div>
               </div>
             </button>
@@ -213,7 +209,7 @@ export function TemplateSelector() {
 
         {!hideColorPicker && (
           <div className="space-y-2">
-            <Label className="text-xs">Couleur principale</Label>
+            <Label className="text-xs">{t.editor.primaryColor}</Label>
             <div className="flex items-center gap-2 flex-wrap">
               {presetColors.map((color) => (
                 <button

@@ -4,6 +4,7 @@ import { useRef, useState, useCallback } from "react";
 import { useResumeStore } from "@/store/resume-store";
 import { createClient } from "@/lib/supabase/client";
 import { getCroppedImg } from "@/lib/crop-image";
+import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Camera, X, Loader2, Sparkles, RotateCcw, Check, ZoomIn, Plus, Crop, Video } from "lucide-react";
 import { toast } from "sonner";
@@ -16,11 +17,12 @@ interface GeneratedImage {
   mimeType: string;
 }
 
-const styleLabels = ["Classique", "Smart Casual", "Elegant"];
-
 export function PhotoUpload() {
+  const { t } = useI18n();
   const { resume, updatePersonalInfo } = useResumeStore();
   const supabase = createClient();
+
+  const styleLabels = [t.photo.styleClassic, t.photo.styleCasual, t.photo.styleElegant];
 
   // Manual upload + crop state
   const [cropSource, setCropSource] = useState<string | null>(null);
@@ -45,8 +47,8 @@ export function PhotoUpload() {
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { toast.error("Max 5 Mo"); return; }
-    if (!file.type.startsWith("image/")) { toast.error("Image uniquement"); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error(t.photo.maxSize); return; }
+    if (!file.type.startsWith("image/")) { toast.error(t.photo.imageOnly); return; }
     const reader = new FileReader();
     reader.onload = () => setCropSource(reader.result as string);
     reader.readAsDataURL(file);
@@ -64,24 +66,27 @@ export function PhotoUpload() {
       const croppedDataUrl = await getCroppedImg(cropSource, croppedAreaPixels);
 
       const blob = await fetch(croppedDataUrl).then((r) => r.blob());
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { toast.error(t.photo.reconnect); return; }
+
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-      const filePath = `photos/${fileName}`;
+      const filePath = `${user.id}/photos/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("cv-assets")
         .upload(filePath, blob, { contentType: "image/jpeg", upsert: true });
 
       if (uploadError) {
-        toast.error(`Erreur upload : ${uploadError.message}`);
+        toast.error(`${t.photo.uploadError} : ${uploadError.message}`);
         return;
       }
 
       const { data: { publicUrl } } = supabase.storage.from("cv-assets").getPublicUrl(filePath);
       updatePersonalInfo({ photo: publicUrl });
-      toast.success("Photo mise a jour !");
+      toast.success(t.photo.photoUpdated);
       setCropSource(null);
     } catch {
-      toast.error("Erreur lors de l'upload");
+      toast.error(t.photo.uploadError);
     } finally {
       setUploading(false);
     }
@@ -140,10 +145,10 @@ export function PhotoUpload() {
       });
 
       const data = await res.json();
-      if (!res.ok) { setGenError(data.error || "Erreur"); return; }
+      if (!res.ok) { setGenError(data.error || t.common.error); return; }
       setGeneratedImages(data.images);
     } catch {
-      setGenError("Erreur de connexion");
+      setGenError(t.photo.connectionError);
     } finally {
       setGenerating(false);
     }
@@ -153,7 +158,7 @@ export function PhotoUpload() {
     if (selectedIndex !== null && generatedImages[selectedIndex]) {
       const img = generatedImages[selectedIndex];
       updatePersonalInfo({ photo: `data:${img.mimeType};base64,${img.imageBase64}` });
-      toast.success("Headshot pro applique !");
+      toast.success(t.photo.headshotApplied);
       setShowGenerator(false);
       setSourceImages([]);
       setGeneratedImages([]);
@@ -183,14 +188,14 @@ export function PhotoUpload() {
           <div className="flex items-center gap-2">
             <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
               <Camera className="w-4 h-4 mr-1.5" />
-              {resume.personalInfo.photo ? "Changer" : "Ajouter photo"}
+              {resume.personalInfo.photo ? t.photo.change : t.photo.addPhoto}
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={() => setShowGenerator(!showGenerator)} className="text-primary border-primary/30 hover:bg-primary/5">
               <Sparkles className="w-4 h-4 mr-1.5" />
               Headshot Pro
             </Button>
           </div>
-          <p className="text-[10px] text-muted-foreground">JPG, PNG. Max 5 Mo. Le crop s&apos;ouvre apres upload.</p>
+          <p className="text-[10px] text-muted-foreground">{t.photo.hint}</p>
         </div>
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
       </div>
@@ -200,7 +205,7 @@ export function PhotoUpload() {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6" role="dialog">
           <div className="bg-white rounded-2xl overflow-hidden max-w-lg w-full">
             <div className="px-4 py-3 border-b flex items-center justify-between">
-              <p className="font-semibold text-sm flex items-center gap-2"><Crop className="w-4 h-4" /> Recadrer votre photo</p>
+              <p className="font-semibold text-sm flex items-center gap-2"><Crop className="w-4 h-4" /> {t.photo.cropTitle}</p>
               <button type="button" onClick={() => setCropSource(null)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
             </div>
             <div className="relative w-full h-80 bg-slate-900">
@@ -217,13 +222,13 @@ export function PhotoUpload() {
               />
             </div>
             <div className="px-4 py-2 border-t">
-              <label className="text-xs text-muted-foreground">Zoom</label>
+              <label className="text-xs text-muted-foreground">{t.photo.zoom}</label>
               <input type="range" min={1} max={3} step={0.05} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="w-full accent-primary" />
             </div>
             <div className="px-4 py-3 border-t flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => setCropSource(null)}>Annuler</Button>
+              <Button variant="outline" size="sm" onClick={() => setCropSource(null)}>{t.common.cancel}</Button>
               <Button size="sm" onClick={handleCropConfirm} disabled={uploading}>
-                {uploading ? <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" />Upload...</> : <><Check className="w-4 h-4 mr-1.5" />Appliquer</>}
+                {uploading ? <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" />{t.photo.uploading}</> : <><Check className="w-4 h-4 mr-1.5" />{t.common.apply}</>}
               </Button>
             </div>
           </div>
@@ -237,9 +242,9 @@ export function PhotoUpload() {
             <div>
               <p className="text-sm font-semibold flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-primary" />
-                Generateur de headshot pro
+                {t.photo.generatorTitle}
               </p>
-              <p className="text-xs text-muted-foreground">Uploadez 1 a 3 photos pour de meilleurs resultats</p>
+              <p className="text-xs text-muted-foreground">{t.photo.generatorHint}</p>
             </div>
             <button type="button" onClick={() => { setShowGenerator(false); setSourceImages([]); setGeneratedImages([]); }} className="text-slate-400 hover:text-slate-600">
               <X className="w-4 h-4" />
@@ -271,7 +276,7 @@ export function PhotoUpload() {
                   className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-300 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-5 h-5 text-slate-400" />
-                  <span className="text-[9px] text-slate-400">Fichier</span>
+                  <span className="text-[9px] text-slate-400">{t.photo.file}</span>
                 </button>
               </div>
             )}
@@ -283,14 +288,14 @@ export function PhotoUpload() {
                 className="w-20 h-20 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 cursor-pointer"
               >
                 <Video className="w-5 h-5 text-primary/60" />
-                <span className="text-[9px] text-primary/60">Camera</span>
+                <span className="text-[9px] text-primary/60">{t.photo.camera}</span>
               </button>
             )}
           </div>
 
           {sourceImages.length > 0 && (
             <p className="text-[10px] text-muted-foreground">
-              {sourceImages.length}/3 photos — {sourceImages.length >= 2 ? "bonne base pour la generation" : "ajoutez plus de photos pour un meilleur resultat"}
+              {sourceImages.length}/3 {sourceImages.length >= 2 ? t.photo.photosGood : t.photo.photosMore}
             </p>
           )}
 
@@ -298,7 +303,7 @@ export function PhotoUpload() {
           {sourceImages.length > 0 && generatedImages.length === 0 && !generating && (
             <Button size="sm" onClick={handleGenerate}>
               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Generer les headshots
+              {t.photo.generate}
             </Button>
           )}
 
@@ -347,17 +352,17 @@ export function PhotoUpload() {
                     </div>
                     <p className="text-[10px] text-muted-foreground">{styleLabels[i]}</p>
                     {selectedIndex === i && (
-                      <p className="text-[10px] text-primary font-medium flex items-center justify-center gap-0.5"><Check className="w-3 h-3" /> Choisi</p>
+                      <p className="text-[10px] text-primary font-medium flex items-center justify-center gap-0.5"><Check className="w-3 h-3" /> {t.photo.chosen}</p>
                     )}
                   </div>
                 ))}
               </div>
               <div className="flex items-center justify-center gap-2">
                 <Button size="sm" variant="outline" onClick={handleGenerate}>
-                  <RotateCcw className="w-3.5 h-3.5 mr-1" /> Regenerer
+                  <RotateCcw className="w-3.5 h-3.5 mr-1" /> {t.photo.regenerate}
                 </Button>
                 <Button size="sm" onClick={handleUseGenerated} disabled={selectedIndex === null} className="bg-green-600 hover:bg-green-700 disabled:opacity-50">
-                  <Check className="w-3.5 h-3.5 mr-1" /> Appliquer
+                  <Check className="w-3.5 h-3.5 mr-1" /> {t.common.apply}
                 </Button>
               </div>
             </>
@@ -387,9 +392,9 @@ export function PhotoUpload() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`data:${generatedImages[lightboxIndex].mimeType};base64,${generatedImages[lightboxIndex].imageBase64}`} alt={styleLabels[lightboxIndex]} className="max-h-[75vh] w-auto rounded-2xl shadow-2xl mx-auto" />
             <div className="flex items-center justify-center gap-3 mt-4">
-              <Button variant="outline" size="sm" disabled={lightboxIndex === 0} onClick={() => setLightboxIndex(lightboxIndex - 1)} className="text-white border-white/30 hover:bg-white/10">Precedent</Button>
-              <Button size="sm" onClick={() => { setSelectedIndex(lightboxIndex); setLightboxIndex(null); }} className="bg-green-600 hover:bg-green-700"><Check className="w-4 h-4 mr-1" />Choisir</Button>
-              <Button variant="outline" size="sm" disabled={lightboxIndex === generatedImages.length - 1} onClick={() => setLightboxIndex(lightboxIndex + 1)} className="text-white border-white/30 hover:bg-white/10">Suivant</Button>
+              <Button variant="outline" size="sm" disabled={lightboxIndex === 0} onClick={() => setLightboxIndex(lightboxIndex - 1)} className="text-white border-white/30 hover:bg-white/10">{t.common.previous}</Button>
+              <Button size="sm" onClick={() => { setSelectedIndex(lightboxIndex); setLightboxIndex(null); }} className="bg-green-600 hover:bg-green-700"><Check className="w-4 h-4 mr-1" />{t.common.choose}</Button>
+              <Button variant="outline" size="sm" disabled={lightboxIndex === generatedImages.length - 1} onClick={() => setLightboxIndex(lightboxIndex + 1)} className="text-white border-white/30 hover:bg-white/10">{t.common.next}</Button>
             </div>
           </div>
         </div>

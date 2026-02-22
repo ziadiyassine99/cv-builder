@@ -10,17 +10,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Heart, Plus, X } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function InterestsForm() {
   const { resume, addInterest, updateInterest, removeInterest } =
     useResumeStore();
+  const { t } = useI18n();
 
   return (
     <Card>
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Heart className="w-5 h-5 text-primary" />
-          Centres d&apos;intérêt
+          {t.forms.interestsTitle}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -35,8 +37,9 @@ export function InterestsForm() {
                 onChange={(e) =>
                   updateInterest(interest.id, { name: e.target.value })
                 }
-                placeholder="Intérêt..."
-                className="border-0 p-0 h-auto text-sm w-24 focus-visible:ring-0"
+                placeholder={t.forms.interestPlaceholder}
+                className="border-0 p-0 h-auto text-sm min-w-[60px] max-w-[180px] focus-visible:ring-0"
+                style={{ width: `${Math.max(60, (interest.name.length + 2) * 8)}px` }}
               />
               <button
                 type="button"
@@ -51,7 +54,7 @@ export function InterestsForm() {
 
         <Button variant="outline" className="w-full" onClick={addInterest}>
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter un centre d&apos;intérêt
+          {t.forms.addInterest}
         </Button>
       </CardContent>
     </Card>

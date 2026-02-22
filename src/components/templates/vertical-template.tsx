@@ -1,4 +1,5 @@
 import type { ResumeData } from "@/types/resume";
+import { useI18n } from "@/lib/i18n";
 import { formatDateRange, hasContent } from "./template-utils";
 
 interface Props {
@@ -13,8 +14,16 @@ function descriptionLines(text: string): string[] {
 }
 
 export function VerticalTemplate({ data }: Props) {
+  const { t } = useI18n();
   const pi = data.personalInfo;
   const content = hasContent(data);
+
+  const dateOpts = {
+    months: t.templates.months,
+    present: t.templates.present,
+    from: t.templates.from,
+    to: t.templates.to,
+  };
 
   return (
     <div className="min-h-[297mm] text-[11px] leading-relaxed bg-white px-8 py-8">
@@ -44,7 +53,7 @@ export function VerticalTemplate({ data }: Props) {
       <div className="flex gap-6 mb-6">
         <div className="w-[38%] shrink-0">
           <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-2">
-            Contact
+            {t.templates.contact}
           </h2>
           <div className="space-y-1 text-[10px] text-gray-700">
             {pi.phone && <div>{pi.phone}</div>}
@@ -60,7 +69,7 @@ export function VerticalTemplate({ data }: Props) {
         {content.hasProfile && (
           <div className="flex-1">
             <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-2">
-              Profil
+              {t.templates.profile}
             </h2>
             <p className="text-[10px] text-gray-700 leading-relaxed whitespace-pre-line">
               {data.profile}
@@ -71,13 +80,13 @@ export function VerticalTemplate({ data }: Props) {
 
       {/* Main body: two columns */}
       <div className="flex gap-6">
-        {/* Left column: Formation, Compétences, Langues */}
+        {/* Left column */}
         <div className="w-[38%] shrink-0">
-          {/* Formation */}
+          {/* Education */}
           {content.hasEducation && (
             <div className="mb-5">
               <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-3">
-                Formation
+                {t.templates.education}
               </h2>
               <div className="relative">
                 {/* Timeline line */}
@@ -91,7 +100,7 @@ export function VerticalTemplate({ data }: Props) {
                         {edu.degree}
                       </h3>
                       <p className="text-[10px] text-gray-600">
-                        {formatDateRange(edu.startDate, edu.endDate, edu.current)}
+                        {formatDateRange(edu.startDate, edu.endDate, edu.current, dateOpts)}
                       </p>
                       {edu.school && (
                         <p className="text-[10px] text-gray-500">{edu.school}</p>
@@ -103,11 +112,11 @@ export function VerticalTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Compétences */}
+          {/* Skills */}
           {content.hasSkills && (
             <div className="mb-5">
               <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-2">
-                Compétences
+                {t.templates.skills}
               </h2>
               <ul className="space-y-0.5">
                 {data.skills.map((skill) => (
@@ -120,11 +129,11 @@ export function VerticalTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Langues */}
+          {/* Languages */}
           {content.hasLanguages && (
             <div className="mb-5">
               <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-2">
-                Langues
+                {t.templates.languages}
               </h2>
               <ul className="space-y-0.5">
                 {data.languages.map((lang) => (
@@ -141,7 +150,7 @@ export function VerticalTemplate({ data }: Props) {
           {content.hasInterests && (
             <div className="mb-5">
               <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-2">
-                Centres d&apos;intérêt
+                {t.templates.interests}
               </h2>
               <ul className="space-y-0.5">
                 {data.interests.map((interest) => (
@@ -155,12 +164,12 @@ export function VerticalTemplate({ data }: Props) {
           )}
         </div>
 
-        {/* Right column: Expériences Professionnelles */}
+        {/* Right column: Experiences */}
         <div className="flex-1">
           {content.hasExperience && (
             <div>
               <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-900 mb-3">
-                Expériences professionnelles
+                {t.templates.experiences}
               </h2>
               <div className="relative">
                 {/* Timeline line */}
@@ -177,7 +186,7 @@ export function VerticalTemplate({ data }: Props) {
                         )}
                       </h3>
                       <p className="text-[10px] text-gray-500">
-                        {formatDateRange(exp.startDate, exp.endDate, exp.current)}
+                        {formatDateRange(exp.startDate, exp.endDate, exp.current, dateOpts)}
                       </p>
                       {exp.description && (
                         <ul className="mt-1 space-y-0.5">

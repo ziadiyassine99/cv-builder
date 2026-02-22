@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Copy, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 interface ResumeCardActionsProps {
   resume: {
@@ -34,6 +35,7 @@ interface ResumeCardActionsProps {
 export function ResumeCardActions({ resume }: ResumeCardActionsProps) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
 
   async function handleDuplicate() {
     const { data, error } = await supabase
@@ -56,16 +58,16 @@ export function ResumeCardActions({ resume }: ResumeCardActionsProps) {
       .single();
 
     if (error || !data) {
-      toast.error("Erreur lors de la duplication");
+      toast.error(t.dashboard.duplicateError);
       return;
     }
 
-    toast.success("CV dupliqué !");
+    toast.success(t.dashboard.duplicateSuccess);
     router.refresh();
   }
 
   async function handleDelete() {
-    if (!confirm("Supprimer ce CV définitivement ?")) return;
+    if (!confirm(t.dashboard.deleteConfirm)) return;
 
     const { error } = await supabase
       .from("resumes")
@@ -73,11 +75,11 @@ export function ResumeCardActions({ resume }: ResumeCardActionsProps) {
       .eq("id", resume.id);
 
     if (error) {
-      toast.error("Erreur lors de la suppression");
+      toast.error(t.dashboard.deleteError);
       return;
     }
 
-    toast.success("CV supprimé");
+    toast.success(t.dashboard.deleteSuccess);
     router.refresh();
   }
 
@@ -97,11 +99,11 @@ export function ResumeCardActions({ resume }: ResumeCardActionsProps) {
           onClick={() => router.push(`/app/resumes/${resume.id}/edit`)}
         >
           <Pencil className="w-4 h-4 mr-2" />
-          Modifier
+          {t.dashboard.edit}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDuplicate}>
           <Copy className="w-4 h-4 mr-2" />
-          Dupliquer
+          {t.common.duplicate}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -109,7 +111,7 @@ export function ResumeCardActions({ resume }: ResumeCardActionsProps) {
           className="text-destructive focus:text-destructive"
         >
           <Trash2 className="w-4 h-4 mr-2" />
-          Supprimer
+          {t.common.delete}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

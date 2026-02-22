@@ -46,6 +46,17 @@ interface ResumeStore {
   updateInterest: (id: string, data: Partial<Interest>) => void;
   removeInterest: (id: string) => void;
 
+  addCustomSection: () => void;
+  removeCustomSection: (id: string) => void;
+  updateCustomSectionTitle: (id: string, title: string) => void;
+  addCustomSectionItem: (sectionId: string) => void;
+  updateCustomSectionItem: (
+    sectionId: string,
+    itemId: string,
+    data: Partial<CustomSection["items"][number]>
+  ) => void;
+  removeCustomSectionItem: (sectionId: string, itemId: string) => void;
+
   setIsSaving: (saving: boolean) => void;
   markClean: () => void;
   reset: () => void;
@@ -277,6 +288,95 @@ export const useResumeStore = create<ResumeStore>((set) => ({
       resume: {
         ...state.resume,
         interests: state.resume.interests.filter((i) => i.id !== id),
+      },
+      isDirty: true,
+    })),
+
+  addCustomSection: () =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: [
+          ...state.resume.customSections,
+          { id: uuidv4(), title: "", items: [] },
+        ],
+      },
+      isDirty: true,
+    })),
+
+  removeCustomSection: (id) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.filter((s) => s.id !== id),
+      },
+      isDirty: true,
+    })),
+
+  updateCustomSectionTitle: (id, title) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map((s) =>
+          s.id === id ? { ...s, title } : s
+        ),
+      },
+      isDirty: true,
+    })),
+
+  addCustomSectionItem: (sectionId) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map((s) =>
+          s.id === sectionId
+            ? {
+                ...s,
+                items: [
+                  ...s.items,
+                  {
+                    id: uuidv4(),
+                    title: "",
+                    subtitle: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                  },
+                ],
+              }
+            : s
+        ),
+      },
+      isDirty: true,
+    })),
+
+  updateCustomSectionItem: (sectionId, itemId, data) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map((s) =>
+          s.id === sectionId
+            ? {
+                ...s,
+                items: s.items.map((item) =>
+                  item.id === itemId ? { ...item, ...data } : item
+                ),
+              }
+            : s
+        ),
+      },
+      isDirty: true,
+    })),
+
+  removeCustomSectionItem: (sectionId, itemId) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map((s) =>
+          s.id === sectionId
+            ? { ...s, items: s.items.filter((item) => item.id !== itemId) }
+            : s
+        ),
       },
       isDirty: true,
     })),

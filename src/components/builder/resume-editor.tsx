@@ -15,6 +15,7 @@ import { ExperienceForm } from "./forms/experience-form";
 import { SkillsForm } from "./forms/skills-form";
 import { LanguagesForm } from "./forms/languages-form";
 import { InterestsForm } from "./forms/interests-form";
+import { CustomSectionsForm } from "./forms/custom-sections-form";
 import { TemplateSelector } from "./template-selector";
 import { PrefillBanner } from "./prefill-banner";
 import { ResumePreview } from "./resume-preview";
@@ -27,6 +28,7 @@ import {
   CloudOff,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 interface ResumeEditorProps {
   initialData: {
@@ -85,6 +87,7 @@ function mapDbToStore(db: ResumeEditorProps["initialData"]): ResumeData {
 export function ResumeEditor({ initialData }: ResumeEditorProps) {
   const { resume, setResume, isDirty, isSaving, setIsSaving, markClean } =
     useResumeStore();
+  const { t } = useI18n();
   const supabase = createClient();
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout>>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -117,7 +120,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
     setIsSaving(false);
 
     if (error) {
-      toast.error("Erreur de sauvegarde");
+      toast.error(t.editor.saveError);
       return;
     }
 
@@ -155,15 +158,15 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
     if (!el) return;
 
     setIsExporting(true);
-    toast.info("Génération du PDF...");
+    toast.info(t.editor.generatingPdf);
 
     try {
       const filename = `${resume.personalInfo.firstName || "CV"}_${resume.personalInfo.lastName || "Document"}_CV.pdf`
         .replace(/\s+/g, "_");
       await exportToPdf(el, filename);
-      toast.success("PDF téléchargé !");
+      toast.success(t.editor.pdfDownloaded);
     } catch {
-      toast.error("Erreur lors de la génération du PDF");
+      toast.error(t.editor.pdfError);
     } finally {
       setIsExporting(false);
     }
@@ -174,7 +177,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
       return (
         <span className="flex items-center gap-1.5 text-xs text-amber-600">
           <Loader2 className="w-3 h-3 animate-spin" />
-          Sauvegarde...
+          {t.editor.saving}
         </span>
       );
     }
@@ -182,14 +185,14 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
       return (
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CloudOff className="w-3 h-3" />
-          Non sauvegardé
+          {t.editor.unsaved}
         </span>
       );
     }
     return (
       <span className="flex items-center gap-1.5 text-xs text-green-600">
         <Check className="w-3 h-3" />
-        Sauvegardé
+        {t.editor.saved}
       </span>
     );
   }
@@ -211,7 +214,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
           value={resume.title}
           onChange={(e) => useResumeStore.getState().setTitle(e.target.value)}
           className="text-lg font-semibold bg-transparent border-none outline-none focus:ring-0 flex-1 min-w-0"
-          placeholder="Titre du CV"
+          placeholder={t.editor.resumeTitle}
         />
 
         <div className="flex items-center gap-3 shrink-0">
@@ -226,7 +229,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
             disabled={isSaving || !isDirty}
           >
             <Save className="w-4 h-4 mr-2" />
-            Sauvegarder
+            {t.editor.save}
           </Button>
           <Button
             size="sm"
@@ -239,7 +242,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
             ) : (
               <Download className="w-4 h-4 mr-2" />
             )}
-            Télécharger PDF
+            {t.editor.downloadPdf}
           </Button>
         </div>
       </header>
@@ -259,6 +262,7 @@ export function ResumeEditor({ initialData }: ResumeEditorProps) {
               <SkillsForm />
               <LanguagesForm />
               <InterestsForm />
+              <CustomSectionsForm />
             </div>
           </ScrollArea>
         </div>
