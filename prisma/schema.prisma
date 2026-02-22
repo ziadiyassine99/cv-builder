@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  resumes   Resume[]
+
+  @@map("users")
+}
+
+model Resume {
+  id             String   @id @default(cuid())
+  title          String   @default("CV sans titre")
+  templateId     String   @default("classic") @map("template_id")
+  personalInfo   Json     @default("{}") @map("personal_info")
+  profile        String   @default("")
+  education      Json     @default("[]")
+  experience     Json     @default("[]")
+  skills         Json     @default("[]")
+  languages      Json     @default("[]")
+  interests      Json     @default("[]")
+  customSections Json     @default("[]") @map("custom_sections")
+  colorPrimary   String   @default("#0e7490") @map("color_primary")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  userId         String   @map("user_id")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("resumes")
+}
