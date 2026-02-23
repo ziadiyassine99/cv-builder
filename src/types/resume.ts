@@ -60,6 +60,7 @@ export interface Interest {
 export interface CustomSection {
   id: string;
   title: string;
+  column?: "left" | "right";
   items: CustomSectionItem[];
 }
 

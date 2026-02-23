@@ -215,6 +215,8 @@ export const fr = {
     customDescPlaceholder: "Décrivez le projet...",
     addItem: "Ajouter un élément",
     addSection: "Ajouter une section",
+    columnLeft: "Colonne gauche",
+    columnRight: "Colonne droite",
   },
 
   photo: {

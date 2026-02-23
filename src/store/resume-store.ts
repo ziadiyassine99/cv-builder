@@ -49,6 +49,7 @@ interface ResumeStore {
   addCustomSection: () => void;
   removeCustomSection: (id: string) => void;
   updateCustomSectionTitle: (id: string, title: string) => void;
+  updateCustomSectionColumn: (id: string, column: "left" | "right") => void;
   addCustomSectionItem: (sectionId: string) => void;
   updateCustomSectionItem: (
     sectionId: string,
@@ -298,7 +299,7 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ...state.resume,
         customSections: [
           ...state.resume.customSections,
-          { id: uuidv4(), title: "", items: [] },
+          { id: uuidv4(), title: "", column: "left", items: [] },
         ],
       },
       isDirty: true,
@@ -319,6 +320,17 @@ export const useResumeStore = create<ResumeStore>((set) => ({
         ...state.resume,
         customSections: state.resume.customSections.map((s) =>
           s.id === id ? { ...s, title } : s
+        ),
+      },
+      isDirty: true,
+    })),
+
+  updateCustomSectionColumn: (id, column) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        customSections: state.resume.customSections.map((s) =>
+          s.id === id ? { ...s, column } : s
         ),
       },
       isDirty: true,

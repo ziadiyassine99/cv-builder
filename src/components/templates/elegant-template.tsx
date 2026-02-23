@@ -195,33 +195,11 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {data.customSections.map((section) => (
-            <div key={section.id} className="mb-5">
-              <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
-                {section.title}
-              </h2>
-              <div className="space-y-3">
-                {section.items.map((item) => (
-                  <div key={item.id}>
-                    <div className="flex justify-between items-baseline gap-2">
-                      <h3 className="font-bold text-[11px] text-gray-900">{item.title}</h3>
-                      {(item.startDate || item.endDate) && (
-                        <span className="text-[9px] text-gray-500 shrink-0">
-                          {formatDateRange(item.startDate, item.endDate, false, dateOpts)}
-                        </span>
-                      )}
-                    </div>
-                    {item.subtitle && (
-                      <p className="text-[10px] text-gray-500 italic">{item.subtitle}</p>
-                    )}
-                    {item.description && (
-                      <p className="text-[10px] text-gray-500 mt-0.5 whitespace-pre-line">{item.description}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+          {data.customSections
+            .filter((s) => !s.column || s.column === "left")
+            .map((section) => (
+              <CustomSectionBlock key={section.id} section={section} dateOpts={dateOpts} />
+            ))}
         </div>
 
         {/* Right column */}
@@ -306,7 +284,49 @@ export function ElegantTemplate({ data }: Props) {
               </div>
             </div>
           )}
+
+          {data.customSections
+            .filter((s) => s.column === "right")
+            .map((section) => (
+              <CustomSectionBlock key={section.id} section={section} dateOpts={dateOpts} />
+            ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CustomSectionBlock({
+  section,
+  dateOpts,
+}: {
+  section: ResumeData["customSections"][number];
+  dateOpts: Parameters<typeof formatDateRange>[3];
+}) {
+  return (
+    <div className="mb-5">
+      <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
+        {section.title}
+      </h2>
+      <div className="space-y-3">
+        {section.items.map((item) => (
+          <div key={item.id}>
+            <div className="flex justify-between items-baseline gap-2">
+              <h3 className="font-bold text-[11px] text-gray-900">{item.title}</h3>
+              {(item.startDate || item.endDate) && (
+                <span className="text-[9px] text-gray-500 shrink-0">
+                  {formatDateRange(item.startDate, item.endDate, false, dateOpts)}
+                </span>
+              )}
+            </div>
+            {item.subtitle && (
+              <p className="text-[10px] text-gray-500 italic">{item.subtitle}</p>
+            )}
+            {item.description && (
+              <p className="text-[10px] text-gray-500 mt-0.5 whitespace-pre-line">{item.description}</p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

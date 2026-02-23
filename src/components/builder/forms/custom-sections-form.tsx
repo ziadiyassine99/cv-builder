@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LayoutList, Plus, Trash2 } from "lucide-react";
+import { LayoutList, Plus, Trash2, PanelLeft, PanelRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function CustomSectionsForm() {
@@ -23,6 +23,7 @@ export function CustomSectionsForm() {
     addCustomSectionItem,
     updateCustomSectionItem,
     removeCustomSectionItem,
+    updateCustomSectionColumn,
   } = useResumeStore();
   const { t } = useI18n();
 
@@ -53,6 +54,27 @@ export function CustomSectionsForm() {
                 onClick={() => removeCustomSection(section.id)}
               >
                 <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant={(!section.column || section.column === "left") ? "default" : "outline"}
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => updateCustomSectionColumn(section.id, "left")}
+              >
+                <PanelLeft className="w-3.5 h-3.5 mr-1.5" />
+                {t.forms.columnLeft}
+              </Button>
+              <Button
+                variant={section.column === "right" ? "default" : "outline"}
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => updateCustomSectionColumn(section.id, "right")}
+              >
+                <PanelRight className="w-3.5 h-3.5 mr-1.5" />
+                {t.forms.columnRight}
               </Button>
             </div>
 

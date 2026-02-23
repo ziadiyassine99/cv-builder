@@ -217,6 +217,8 @@ export const en: Translations = {
     customDescPlaceholder: "Describe the project...",
     addItem: "Add item",
     addSection: "Add section",
+    columnLeft: "Left column",
+    columnRight: "Right column",
   },
 
   photo: {
