@@ -14,7 +14,7 @@ import { useState } from "react";
 import { PhotoUpload } from "./photo-upload";
 import { useI18n } from "@/lib/i18n";
 
-const TEMPLATES_WITH_PHOTO = ["professional", "vertical"];
+const TEMPLATES_WITH_PHOTO = ["professional", "vertical", "elegant"];
 
 export function PersonalInfoForm() {
   const { resume, updatePersonalInfo } = useResumeStore();
