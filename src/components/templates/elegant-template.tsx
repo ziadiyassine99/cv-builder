@@ -17,16 +17,22 @@ function langBarWidth(level: string): string {
   const map: Record<string, string> = {
     "Langue maternelle": "100%",
     Native: "100%",
+    C2: "90%",
     Courant: "85%",
     Fluent: "85%",
-    Avancé: "65%",
-    Advanced: "65%",
+    C1: "75%",
+    Avancé: "70%",
+    Advanced: "70%",
+    B2: "60%",
     Intermédiaire: "50%",
     Intermediate: "50%",
+    B1: "45%",
+    A2: "30%",
     Débutant: "25%",
     Beginner: "25%",
+    A1: "15%",
   };
-  return map[level] || "60%";
+  return map[level] || "50%";
 }
 
 export function ElegantTemplate({ data }: Props) {
@@ -46,38 +52,31 @@ export function ElegantTemplate({ data }: Props) {
     <div className="min-h-[297mm] text-[11px] leading-relaxed bg-white">
       {/* ── Header ── */}
       <div
-        className="flex items-center gap-5 px-7 py-5"
+        className="flex items-start gap-5 px-6 pt-5 pb-4"
         style={{ backgroundColor: color }}
       >
         {pi.photo ? (
-          <div
-            className="w-[105px] h-[125px] rounded-lg overflow-hidden shrink-0"
-            style={{ border: `3px solid ${color}`, boxShadow: "0 0 0 3px rgba(255,255,255,0.3)" }}
-          >
+          <div className="w-[120px] h-[140px] rounded-lg overflow-hidden shrink-0 border-[3px] border-white/30">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={pi.photo} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
-          <div
-            className="w-[105px] h-[125px] rounded-lg shrink-0 bg-white/10"
-            style={{ border: "3px solid rgba(255,255,255,0.25)" }}
-          />
+          <div className="w-[120px] h-[140px] rounded-lg shrink-0 bg-white/10 border-[3px] border-white/25" />
         )}
 
-        <div className="flex-1 min-w-0">
-          <h1 className="text-[24px] font-bold text-white tracking-wide leading-tight">
+        <div className="flex-1 min-w-0 pt-2">
+          <h1 className="text-[26px] font-bold text-white tracking-wide leading-tight">
             {pi.firstName} {pi.lastName}
           </h1>
           {pi.jobTitle && (
-            <p className="text-[12px] text-white/75 mt-0.5 tracking-wide">
+            <p className="text-[13px] text-white/70 mt-1 tracking-wide">
               {pi.jobTitle}
             </p>
           )}
 
-          {/* Row 1: email + phone */}
-          <div className="flex items-center gap-5 mt-3">
+          <div className="flex items-center gap-4 mt-4">
             {pi.email && (
-              <span className="text-white/90 text-[9px] flex items-center gap-1.5">
+              <span className="text-white/85 text-[9px] flex items-center gap-1.5">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
@@ -85,7 +84,7 @@ export function ElegantTemplate({ data }: Props) {
               </span>
             )}
             {pi.phone && (
-              <span className="text-white/90 text-[9px] flex items-center gap-1.5">
+              <span className="text-white/85 text-[9px] flex items-center gap-1.5">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
@@ -94,10 +93,9 @@ export function ElegantTemplate({ data }: Props) {
             )}
           </div>
 
-          {/* Row 2: address */}
           {(pi.address || pi.city) && (
             <div className="mt-1">
-              <span className="text-white/90 text-[9px] flex items-center gap-1.5">
+              <span className="text-white/85 text-[9px] flex items-center gap-1.5">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -109,23 +107,21 @@ export function ElegantTemplate({ data }: Props) {
         </div>
       </div>
 
-      {/* ── Body: two columns ── */}
+      {/* ── Body ── */}
       <div className="flex">
         {/* Left column */}
         <div className="w-[56%] px-7 py-5">
-          {/* Profile / About me */}
           {content.hasProfile && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
                 {t.templates.profile}
               </h2>
-              <p className="text-[10px] text-gray-600 leading-relaxed italic">
+              <p className="text-[10.5px] text-gray-700 leading-[1.6]">
                 {data.profile}
               </p>
             </div>
           )}
 
-          {/* Education */}
           {content.hasEducation && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -160,7 +156,6 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Experience */}
           {content.hasExperience && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -200,7 +195,6 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Custom Sections */}
           {data.customSections.map((section) => (
             <div key={section.id} className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -210,9 +204,7 @@ export function ElegantTemplate({ data }: Props) {
                 {section.items.map((item) => (
                   <div key={item.id}>
                     <div className="flex justify-between items-baseline gap-2">
-                      <h3 className="font-bold text-[11px] text-gray-900">
-                        {item.title}
-                      </h3>
+                      <h3 className="font-bold text-[11px] text-gray-900">{item.title}</h3>
                       {(item.startDate || item.endDate) && (
                         <span className="text-[9px] text-gray-500 shrink-0">
                           {formatDateRange(item.startDate, item.endDate, false, dateOpts)}
@@ -234,7 +226,6 @@ export function ElegantTemplate({ data }: Props) {
 
         {/* Right column */}
         <div className="w-[44%] px-6 py-5">
-          {/* Skills */}
           {content.hasSkills && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -242,7 +233,7 @@ export function ElegantTemplate({ data }: Props) {
               </h2>
               <div className="space-y-1.5 mt-1">
                 {data.skills.map((skill) => (
-                  <div key={skill.id} className="text-[11px]" style={{ color }}>
+                  <div key={skill.id} className="text-[11px] text-gray-800">
                     {skill.name}
                   </div>
                 ))}
@@ -250,7 +241,6 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Languages */}
           {content.hasLanguages && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -275,7 +265,6 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Interests */}
           {content.hasInterests && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
@@ -298,7 +287,6 @@ export function ElegantTemplate({ data }: Props) {
             </div>
           )}
 
-          {/* Additional info */}
           {(pi.nationality || pi.drivingLicense) && (
             <div className="mb-5">
               <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
