@@ -180,11 +180,10 @@ export function ElegantTemplate({ data }: Props) {
                       </p>
                     )}
                     {exp.description && (
-                      <ul className="mt-1 space-y-0.5">
+                      <ul className="mt-1 space-y-0.5 list-disc list-outside pl-4">
                         {descriptionLines(exp.description).map((line, i) => (
-                          <li key={i} className="flex gap-1.5 text-[10px] text-gray-600">
-                            <span className="shrink-0 mt-[3px]">•</span>
-                            <span>{line}</span>
+                          <li key={i} className="text-[10px] text-gray-600 pl-0.5">
+                            {line}
                           </li>
                         ))}
                       </ul>
