@@ -288,7 +288,18 @@ export function ElegantTemplate({ data }: Props) {
           {data.customSections
             .filter((s) => s.column === "right")
             .map((section) => (
-              <CustomSectionBlock key={section.id} section={section} dateOpts={dateOpts} />
+              <div key={section.id} className="mb-5">
+                <h2 className="text-[14px] font-semibold italic text-gray-800 pb-1 mb-2 border-b border-gray-300">
+                  {section.title}
+                </h2>
+                <div className="space-y-1.5 mt-1">
+                  {section.items.map((item) => (
+                    <div key={item.id} className="text-[11px] text-gray-800">
+                      {item.title}
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
         </div>
       </div>
